@@ -13,11 +13,27 @@ const insertUser = async (email, password) => {
         const result = await client.query(query, values);
         return result.rows[0];
     } catch (error) {
-        console.log(error);
+        return error;
+    }
+};
+
+const getUser = async (email, password) => {
+
+    const query = 'SELECT * FROM users WHERE email = $1 AND password = $2';
+    const values = [email, password];
+
+    try {
+        const client = new Client;
+        await client.connect();
+        const result = await client.query(query, values);
+        return result.rows[0];
+    } catch (error) {
+        console.log("getUser", error);
         return error;
     }
 };
 
 module.exports = {
-    insertUser
+    insertUser,
+    getUser
 }

@@ -1,6 +1,10 @@
+const cookieParser = require('cookie-parser');
 const express = require('express');
 const hbs = require('hbs');
-const { insertUser } = require('./models/queries');
+
+const { userLogin } = require('./controllers/login.controller');
+const { userRegister } = require('./controllers/register.controller');
+const { generateJWT } = require('./helpers/generateJWT');
 
 const app = express();
 const port = 3000;
@@ -11,37 +15,16 @@ hbs.registerPartials(__dirname + '/views/partials');
 app.set('view engine', 'hbs');
 app.use( express.json() );
 app.use( express.urlencoded({ extended: true }) );
+app.use( cookieParser() );
+// Register
+app.get('/', (req, res) => res.render('register'));
 
-app.get('/', (req, res) => {
-    res.render('register');
-});
+app.post('/', userRegister);
 
-app.post('/', async (req, res) => {
-    const { email, password } = req.body;
+// Login
 
-    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+app.get('/login', (req, res) => res.render('login'));
 
-    if(email.match(emailRegex) && password) {
-        const response = await insertUser(email, password);
-        if (!response.severity) {
-            res.status(200).render('login', {
-                message: 'Usuario creado con éxito.',
-                response
-            });
-            return;
-        }
-        const errorMessages = {
-            "users_email_key": "El correo electrónico ya fue utilizado"
-        }
-
-        res.status(409).render('register', {
-            error: `${errorMessages[response.constraint]}.`
-        });
-    }else{
-        res.status(500).render('register', {
-            message: 'Ha ocurrido un error, contacta al administrador.'
-        });
-    }
-});
+app.post('/login', generateJWT, userLogin);
 
 app.listen(port, () => console.log(`Server initialized at port ${port}.`));
