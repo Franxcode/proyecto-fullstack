@@ -21,8 +21,11 @@
                 {{#if error}}
                 <div class="alert alert-danger">{{ error }}</div>
                 {{/if}}
+                {{#if message}}
+                <div class="alert alert-success">{{ message }}</div>
+                {{/if}}
                 {{!-- Login Form --}}
-                <form method="post">
+                <form method="post" action="/login">
                         <input class="form-control mb-2" type="email" id="email" name="email" placeholder="Ingrese su correo electrónico" aria-label="Email" required>
                         <input class="form-control mb-2" type="password" id="password" name="password" placeholder="Ingrese su contraseña" aria-label="Password" required>
                     <button class="btn btn-dark btn-lg w-100 mb-2" type="submit">Acceder</button>

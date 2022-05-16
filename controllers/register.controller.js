@@ -10,8 +10,7 @@ const userRegister = async (req = request, res = response) => {
         const response = await insertUser(email, password);
         if (!response.severity) {
             res.status(200).render('login', {
-                message: 'Usuario creado con éxito.',
-                response
+                message: 'Usuario creado con éxito.'
             });
             return;
         }
