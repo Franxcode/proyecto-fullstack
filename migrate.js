@@ -16,7 +16,7 @@ const migrate = async () => {
     await client.end();
     return { 
         users: resUsers.rows, 
-        tasks: resTasks.rows 
+        tasks: resTasks.rows
     }
 }
 

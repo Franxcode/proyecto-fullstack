@@ -40,7 +40,71 @@ const getUser = async (email, password) => {
     }
 };
 
+const insertTodo = async (id, todo) => {
+    const query = 'INSERT INTO tasks (tasks_id_user, task_name) VALUES ($1, $2) RETURNING*';
+    const values = [id, todo];
+
+    try {
+        const client = new Client;
+        await client.connect();
+        const result = await client.query(query, values);
+        return result.rows[0];
+    } catch (error) {
+        console.log("insertTodo", error);
+        return error;
+    }
+};
+
+const getTodos = async (id) => {
+    const query = 'SELECT * FROM tasks WHERE tasks_id_user = $1';
+    const values = [id];
+
+    try {
+        const client = new Client;
+        await client.connect();
+        const result = await client.query(query, values);
+        return result.rows;
+    } catch (error) {
+        console.log("getTodos", error);
+        return error;
+    }
+};
+
+const updateTodo = async (todo, id) => {
+    const query = 'UPDATE tasks SET task_name = $1 WHERE id_task = $2 RETURNING*';
+    const values = [todo, id];
+
+    try {
+        const client = new Client;
+        await client.connect();
+        const result = await client.query(query, values);
+        return result.rows[0];
+    } catch (error) {
+        console.log("updateTodo", error);
+        return error;
+    }
+};
+
+const deleteTodo = async (id) => {
+    const query = 'DELETE FROM tasks WHERE id_task = $1';
+    const values = [id];
+
+    try {
+        const client = new Client;
+        await client.connect();
+        const result = await client.query(query, values);
+        return result.rowCount;
+    } catch (error) {
+        console.log("deleteTodo", error);
+        return error;
+    }
+};
+
 module.exports = {
     insertUser,
-    getUser
+    getUser,
+    insertTodo,
+    getTodos,
+    updateTodo,
+    deleteTodo
 }
