@@ -56,7 +56,7 @@ const insertTodo = async (id, todo) => {
 };
 
 const getTodos = async (id) => {
-    const query = 'SELECT * FROM tasks WHERE tasks_id_user = $1';
+    const query = 'SELECT * FROM tasks WHERE tasks_id_user = $1 ORDER BY fecha DESC';
     const values = [id];
 
     try {
@@ -70,9 +70,9 @@ const getTodos = async (id) => {
     }
 };
 
-const updateTodo = async (todo, id) => {
-    const query = 'UPDATE tasks SET task_name = $1 WHERE id_task = $2 RETURNING*';
-    const values = [todo, id];
+const updateTodo = async (id, todo, date) => {
+    const query = 'UPDATE tasks SET task_name = $1, fecha = $2 WHERE id_task = $3 RETURNING*';
+    const values = [todo, date, id];
 
     try {
         const client = new Client;

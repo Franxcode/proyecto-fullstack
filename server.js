@@ -7,7 +7,7 @@ const { logIn } = require('./controllers/login.controller');
 const { logOut } = require('./controllers/logout.controller');
 const { userRegister } = require('./controllers/register.controller');
 const { validateJWT } = require('./helpers/validate-jwt');
-const { insertTodo, getTodos, deleteTodo } = require('./models/queries');
+const { insertTodo, getTodos, deleteTodo, updateTodo } = require('./models/queries');
 
 const app = express();
 const port = 3000;
@@ -52,15 +52,15 @@ app.post('/dashboard', validateJWT, async (req, res) => {
     res.redirect('/dashboard');
 });
 
-app.put('/dashboard', validateJWT, (req, res) => {
-    const { id } = req.params;
-    console.log(id);
-
+app.put('/dashboard/edit', validateJWT, async (req, res) => {
+    const { id, task } = req.body;
+    const date = moment().format('YYYY MM DD, h:mm:ss a');
+    await updateTodo(id, task, date);
+    res.status(200).end();
 });
 
-app.get('/dashboard/:id', validateJWT, async (req, res) => {
+app.get('/dashboard/delete/:id', validateJWT, async (req, res) => {
     const { id } = req.params;
-    console.log(id);
     await deleteTodo(id);
     res.redirect('/dashboard');
 });

@@ -19,12 +19,12 @@ const logIn = async (req = request, res = response) => {
                     }, process.env.SECRETKEY);
                     response.is_admin ? 
                     res.cookie(process.env.SESSIONCOOKIE, token, {
-                        maxAge: 300000,
+                        maxAge: 300000000,
                         secure: true,
                     }).redirect('/admin')
                     :
                     res.cookie(process.env.SESSIONCOOKIE, token, {
-                        maxAge: 300000,
+                        maxAge: 30000000,
                         secure: true,
                     }).redirect('/dashboard');
                     return;

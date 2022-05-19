@@ -19,12 +19,13 @@
         {{/if}}
         <article class="row">
             <div class="col-md-6">
-                <ul class="list-group">
+                <ul class="list-group" id="todoContainer">
                     {{#each formattedResponse }}
-                    <li class="list-group-item">
-                        {{this.task_name}} - {{this.formattedDate}}
-                        <button class="btn btn-danger btn-sm float-end"><a href="/dashboard/{{this.id_task}}" class="list-group-item list-group-item-action bg-danger text-white">Eliminar</a></button>
-                        <button class="btn btn-warning btn-sm float-end me-3"><a href="/dashboard?id={{this.id_task}}&task={{this.task_name}}" class="list-group-item list-group-item-action bg-warning">Editar</a></button>
+                    <li class="list-group-item" id="todoItem">
+                        <span>{{this.task_name}}</span> - {{this.formattedDate}} 
+                        <p hidden>{{this.id_task}}</p>
+                        <button class="btn btn-danger btn-sm float-end"><a href="/dashboard/delete/{{this.id_task}}" class="list-group-item list-group-item-action bg-danger text-white">Eliminar</a></button>                    
+                        <button class="btn btn-warning btn-sm float-end me-3" id="editTodo" data-id="{{this.id_task}}"><a class="list-group-item list-group-item-action bg-warning">Editar</a></button>
                     </li>
                     {{/each}}
                 </ul>
@@ -41,5 +42,49 @@
     </section>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script>
+        const todoContainer = document.querySelector('#todoContainer');
+        const todoItem = document.querySelector('#todoItem');
+        todoContainer.addEventListener('click', (event) => {
+            console.log(event.target.tagName)
+            if(event.target.tagName === 'A'){
+                const a = event.target;
+                const li = a.parentNode.parentNode;
+                const ul = li.parentNode;
+
+                if(a.textContent === 'Editar') {
+                    const span = li.firstElementChild;
+                    const p = li.firstElementChild[1];
+                    console.log("P",p)
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.value = span.textContent;
+                    input.classList.add('form-control')
+                    li.insertBefore(input, span);
+                    li.removeChild(span);
+                    a.textContent = 'Actualizar';
+                }else if (a.textContent === 'Actualizar') {
+                    const input = li.firstElementChild;
+                    const span = document.createElement('span');
+                    span.textContent = input.value;
+
+                    fetch(`/dashboard/edit`, {
+                        method: 'PUT',
+                        body: JSON.stringify({
+                            task: span.textContent,
+                            id: todoItem.children[1].textContent,
+                        }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(response => location.reload())
+                      .catch(error => console.log(error));
+                    li.insertBefore(span, input);
+                    li.removeChild(input);
+                    a.textContent = 'Editar';
+                }
+            }
+        });
+    </script>
 </body>
 </html>
