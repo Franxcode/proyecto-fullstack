@@ -12,7 +12,9 @@ const { insertTodo, getTodos, deleteTodo, updateTodo, getUsers } = require('./mo
 const app = express();
 const port = 3000;
 moment.locale('es');
+
 // Handlebars
+
 hbs.registerPartials(__dirname + '/views/partials');
 hbs.registerHelper("counter", (index) => {
     return index + 1;
@@ -22,7 +24,9 @@ app.set('view engine', 'hbs');
 app.use( express.json() );
 app.use( express.urlencoded({ extended: true }) );
 app.use( cookieParser() );
+
 // Register
+
 app.get('/', (req, res) => res.render('register'));
 
 app.post('/', userRegister);
