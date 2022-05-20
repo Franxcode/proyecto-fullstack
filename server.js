@@ -7,13 +7,16 @@ const { logIn } = require('./controllers/login.controller');
 const { logOut } = require('./controllers/logout.controller');
 const { userRegister } = require('./controllers/register.controller');
 const { validateJWT } = require('./helpers/validate-jwt');
-const { insertTodo, getTodos, deleteTodo, updateTodo } = require('./models/queries');
+const { insertTodo, getTodos, deleteTodo, updateTodo, getUsers } = require('./models/queries');
 
 const app = express();
 const port = 3000;
 moment.locale('es');
 // Handlebars
 hbs.registerPartials(__dirname + '/views/partials');
+hbs.registerHelper("counter", (index) => {
+    return index + 1;
+});
 
 app.set('view engine', 'hbs');
 app.use( express.json() );
@@ -67,7 +70,23 @@ app.get('/dashboard/delete/:id', validateJWT, async (req, res) => {
 
 // Admin
 
-app.get('/admin', validateJWT, (req, res) => req.isAdmin ? res.render('admin') : res.redirect('/dashboard'));
+app.get('/admin', validateJWT, async (req, res) => {
+
+    const response = await getUsers();
+    const formattedResponse = response.map(todo => {
+        const formattedDate = moment(todo.fecha).format("LLL");
+        return {
+            ...todo,
+            formattedDate
+        }
+    });
+
+    if(req.isAdmin) {
+        res.render('admin', { formattedResponse });
+    }else {
+        res.redirect('/dashboard');
+    }
+});
 
 // Logout
 

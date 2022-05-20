@@ -40,6 +40,20 @@ const getUser = async (email, password) => {
     }
 };
 
+const getUsers = async () => {
+    const query = 'SELECT * FROM users';
+
+    try {
+        const client = new Client;
+        await client.connect();
+        const result = await client.query(query);
+        return result.rows;
+    } catch (error) {
+        console.log("getUsers", error);
+        return error;
+    }
+};
+
 const insertTodo = async (id, todo) => {
     const query = 'INSERT INTO tasks (tasks_id_user, task_name) VALUES ($1, $2) RETURNING*';
     const values = [id, todo];
@@ -103,6 +117,7 @@ const deleteTodo = async (id) => {
 module.exports = {
     insertUser,
     getUser,
+    getUsers,
     insertTodo,
     getTodos,
     updateTodo,
